@@ -1,0 +1,6 @@
+@TCGHit.Api_HostAddress = http://localhost:5294
+
+GET {{TCGHit.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
