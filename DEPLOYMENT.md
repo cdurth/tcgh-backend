@@ -22,7 +22,7 @@ backend/                    ← Git root (this directory)
 ## Architecture Overview
 
 ```
-GitHub (push to main)
+GitHub (push to master)
     ↓
 GitHub Actions
     ↓
@@ -175,23 +175,43 @@ Copy the entire JSON output and paste it as the `AZURE_CREDENTIALS` secret.
 
 ## Step 3: Run EF Core Migrations
 
-Before the first deployment, run migrations against the production database:
+Before the first deployment, run migrations against the production database.
 
-```bash
-# From the backend/TCGHit.Api directory
-dotnet ef database update --connection "<production-connection-string>"
+### 3.1 Add your IP to Azure SQL firewall
+
+Azure SQL only allows connections from whitelisted IPs. Add your current IP temporarily:
+
+```powershell
+# Get your current public IP and add firewall rule
+$myIp = (Invoke-WebRequest -Uri "https://api.ipify.org").Content
+az sql server firewall-rule create --resource-group tcgh-rg --server tcghit-sql --name MyLocalIP --start-ip-address $myIp --end-ip-address $myIp
 ```
 
-Or use Azure Data Studio / SQL Server Management Studio to run the migration SQL.
+### 3.2 Run migrations
+
+```powershell
+cd C:\path\to\backend\TCGHit.Api
+dotnet ef database update --connection "Server=tcp:tcghit-sql.database.windows.net,1433;Database=tcghit-db;User ID=tcghitadmin;Password=<your-password>;Encrypt=True;TrustServerCertificate=False;"
+```
+
+### 3.3 Remove firewall rule (optional)
+
+After migrations complete, you can remove the rule since you rarely need local access to production DB:
+
+```powershell
+az sql server firewall-rule delete --resource-group tcgh-rg --server tcghit-sql --name MyLocalIP
+```
+
+> **Note:** If you have a dynamic IP, you'll need to repeat step 3.1 whenever your IP changes. Future migrations can be run from GitHub Actions or Azure Cloud Shell instead.
 
 ## Step 4: Deploy
 
-Push to the `main` branch:
+Push to the `master` branch:
 
 ```bash
 git add .
 git commit -m "Deploy backend to Azure Container Apps"
-git push origin main
+git push origin master
 ```
 
 The GitHub Actions workflow will:
