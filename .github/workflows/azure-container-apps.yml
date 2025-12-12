@@ -119,11 +119,11 @@ jobs:
         with:
           resourceGroup: ${{ secrets.AZURE_RESOURCE_GROUP }}
           containerAppName: ${{ secrets.AZURE_CONTAINER_APP_NAME }}
-          imageToDeploy: ${{ secrets.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+          imageToDeploy: ${{ secrets.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:latest
 
       - name: Output deployment URL
         run: |
           echo "## Deployment Successful! :rocket:" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Application URL:** ${{ steps.deploy.outputs.app-url }}" >> $GITHUB_STEP_SUMMARY
-          echo "**Image:** ${{ secrets.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Image:** ${{ secrets.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:latest" >> $GITHUB_STEP_SUMMARY
