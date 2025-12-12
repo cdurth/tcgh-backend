@@ -46,7 +46,8 @@ try
                     "http://localhost:5173",  // Vite dev server
                     "https://localhost:5173",
                     "https://tcghit.com",     // Production domain
-                    "https://www.tcghit.com"
+                    "https://www.tcghit.com",
+                    "https://jolly-beach-038cec710.3.azurestaticapps.net"  // Azure Static Web Apps
                 )
                 .AllowAnyMethod()
                 .AllowAnyHeader()
