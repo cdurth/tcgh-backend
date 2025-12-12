@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("TCGHit.Api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a6b59113db1ce2dbd737da94606d6c5c56c88456")]
 [assembly: System.Reflection.AssemblyProductAttribute("TCGHit.Api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("TCGHit.Api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

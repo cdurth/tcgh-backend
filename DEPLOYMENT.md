@@ -52,18 +52,14 @@ az account set --subscription "<your-subscription-id>"
 
 ```bash
 az group create \
-  --name tcghit-rg \
+  --name tcgh-rg \
   --location westus2
 ```
 
 ### 1.3 Create Azure Container Registry (ACR)
 
 ```bash
-az acr create \
-  --resource-group tcghit-rg \
-  --name tcghitacr \
-  --sku Basic \
-  --admin-enabled true
+az acr create --resource-group tcgh-rg --name tcghitacr  --sku Basic --admin-enabled true
 ```
 
 Get ACR credentials (you'll need these for GitHub Secrets):
@@ -77,7 +73,7 @@ az acr credential show --name tcghitacr
 ```bash
 az containerapp env create \
   --name tcghit-env \
-  --resource-group tcghit-rg \
+  --resource-group tcgh-rg \
   --location westus2
 ```
 
@@ -87,14 +83,14 @@ az containerapp env create \
 # Create SQL Server
 az sql server create \
   --name tcghit-sql \
-  --resource-group tcghit-rg \
+  --resource-group tcgh-rg \
   --location westus2 \
   --admin-user tcghitadmin \
   --admin-password "<strong-password>"
 
 # Create database (Serverless tier for cost optimization)
 az sql db create \
-  --resource-group tcghit-rg \
+  --resource-group tcgh-rg \
   --server tcghit-sql \
   --name tcghit-db \
   --edition GeneralPurpose \
@@ -105,7 +101,7 @@ az sql db create \
 
 # Allow Azure services to connect
 az sql server firewall-rule create \
-  --resource-group tcghit-rg \
+  --resource-group tcgh-rg \
   --server tcghit-sql \
   --name AllowAzureServices \
   --start-ip-address 0.0.0.0 \
@@ -117,7 +113,7 @@ az sql server firewall-rule create \
 ```bash
 az containerapp create \
   --name tcghit-api \
-  --resource-group tcghit-rg \
+  --resource-group tcgh-rg \
   --environment tcghit-env \
   --image mcr.microsoft.com/dotnet/samples:aspnetapp \
   --target-port 8080 \
@@ -133,7 +129,7 @@ az containerapp create \
 ```bash
 az containerapp registry set \
   --name tcghit-api \
-  --resource-group tcghit-rg \
+  --resource-group tcgh-rg \
   --server tcghitacr.azurecr.io \
   --username tcghitacr \
   --password "<acr-password>"
@@ -141,16 +137,11 @@ az containerapp registry set \
 
 ### 1.8 Set Environment Variables
 
-```bash
-# Get the SQL connection string
-SQL_CONNECTION="Server=tcp:tcghit-sql.database.windows.net,1433;Database=tcghit-db;User ID=tcghitadmin;Password=<password>;Encrypt=True;TrustServerCertificate=False;"
+**PowerShell:**
+```powershell
+$SQL_CONNECTION = "Server=tcp:tcghit-sql.database.windows.net,1433;Database=tcghit-db;User ID=tcghitadmin;Password=<password>;Encrypt=True;TrustServerCertificate=False;"
 
-az containerapp update \
-  --name tcghit-api \
-  --resource-group tcghit-rg \
-  --set-env-vars \
-    "ASPNETCORE_ENVIRONMENT=Production" \
-    "ConnectionStrings__DefaultConnection=$SQL_CONNECTION"
+az containerapp update --name tcghit-api --resource-group tcgh-rg --set-env-vars "ASPNETCORE_ENVIRONMENT=Production" "ConnectionStrings__DefaultConnection=$SQL_CONNECTION"
 ```
 
 ## Step 2: Configure GitHub Secrets
@@ -165,7 +156,7 @@ Add these secrets:
 | `ACR_USERNAME` | `tcghitacr` | From `az acr credential show` |
 | `ACR_PASSWORD` | `<password>` | From `az acr credential show` |
 | `AZURE_CREDENTIALS` | `<json>` | See below |
-| `AZURE_RESOURCE_GROUP` | `tcghit-rg` | Your resource group name |
+| `AZURE_RESOURCE_GROUP` | `tcgh-rg` | Your resource group name |
 | `AZURE_CONTAINER_APP_NAME` | `tcghit-api` | Your container app name |
 
 ### Getting AZURE_CREDENTIALS
@@ -176,7 +167,7 @@ Create a service principal:
 az ad sp create-for-rbac \
   --name "tcghit-github-actions" \
   --role contributor \
-  --scopes /subscriptions/<subscription-id>/resourceGroups/tcghit-rg \
+  --scopes /subscriptions/<subscription-id>/resourceGroups/tcgh-rg \
   --sdk-auth
 ```
 
@@ -216,7 +207,7 @@ The GitHub Actions workflow will:
 ```bash
 az containerapp logs show \
   --name tcghit-api \
-  --resource-group tcghit-rg \
+  --resource-group tcgh-rg \
   --follow
 ```
 
@@ -225,7 +216,7 @@ az containerapp logs show \
 ```bash
 az containerapp show \
   --name tcghit-api \
-  --resource-group tcghit-rg \
+  --resource-group tcgh-rg \
   --query "{status:properties.runningStatus, url:properties.configuration.ingress.fqdn}"
 ```
 
