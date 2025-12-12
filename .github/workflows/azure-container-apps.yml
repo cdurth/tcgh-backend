@@ -5,9 +5,9 @@ name: Backend CI/CD
 
 on:
   push:
-    branches: [main]
+    branches: [master]
   pull_request:
-    branches: [main]
+    branches: [master]
   workflow_dispatch: # Allow manual trigger
 
 env:
@@ -59,7 +59,7 @@ jobs:
     name: Build & Push Image
     runs-on: ubuntu-latest
     needs: build-and-test
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     timeout-minutes: 15
 
     outputs:
@@ -101,7 +101,7 @@ jobs:
     name: Deploy to Container Apps
     runs-on: ubuntu-latest
     needs: docker-build-push
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     timeout-minutes: 10
     environment:
       name: production
