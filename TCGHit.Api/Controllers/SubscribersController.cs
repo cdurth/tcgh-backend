@@ -63,7 +63,7 @@ public class SubscribersController : ControllerBase
 
             // Reactivate inactive subscriber
             existingSubscriber.IsActive = true;
-            existingSubscriber.ConsentGiven = request.ConsentGiven;
+            existingSubscriber.HasConsent = request.ConsentGiven;
             existingSubscriber.SubscribedAt = DateTime.UtcNow;
             existingSubscriber.IpAddress = GetClientIpAddress();
             existingSubscriber.Source = request.Source ?? "landing-page";
@@ -78,7 +78,7 @@ public class SubscribersController : ControllerBase
         var subscriber = new Subscriber
         {
             Email = normalizedEmail,
-            ConsentGiven = request.ConsentGiven,
+            HasConsent = request.ConsentGiven,
             Source = request.Source ?? "landing-page",
             SubscribedAt = DateTime.UtcNow,
             IpAddress = GetClientIpAddress(),

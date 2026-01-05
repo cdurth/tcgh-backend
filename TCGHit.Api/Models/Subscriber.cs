@@ -9,7 +9,7 @@ public class Subscriber
 
     public required string Email { get; set; }
 
-    public bool ConsentGiven { get; set; }
+    public bool HasConsent { get; set; }
 
     public string? Source { get; set; }
 
