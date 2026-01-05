@@ -32,11 +32,8 @@ public class AppDbContext : DbContext
             entity.Property(e => e.IpAddress)
                 .HasMaxLength(45); // IPv6 max length
 
-            entity.Property(e => e.SubscribedAt)
-                .HasDefaultValueSql("GETUTCDATE()");
-
-            entity.Property(e => e.IsActive)
-                .HasDefaultValue(true);
+            // Don't use HasDefaultValue/HasDefaultValueSql - let EF Core send values explicitly
+            // The admin database may not have these default constraints
         });
     }
 }
